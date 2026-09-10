@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Daily Desk is a calm, private daily planning dashboard for your priorities, habits, notes, and helpful prompts.">
+	<meta name="theme-color" content="#f7f5ef">
+	<title>Daily Desk | A calmer way to plan today</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap');
+
+		:root {
+			--paper: #f7f5ef;
+			--ink: #242622;
+			--muted: #74776f;
+			--line: #dddcd4;
+			--card: #fffefa;
+			--moss: #5d704e;
+			--moss-dark: #3f5234;
+			--coral: #dc775b;
+			--sun: #f0c766;
+			--blue: #dfe9e5;
+			--shadow: 0 18px 45px rgba(54, 57, 47, .08);
+		}
+
+		* { box-sizing: border-box; }
+		html { scroll-behavior: smooth; }
+		body { margin: 0; background: var(--paper); color: var(--ink); font-family: 'DM Sans', sans-serif; line-height: 1.5; }
+		button, input, textarea { font: inherit; }
+		button { cursor: pointer; }
+		a { color: inherit; }
+		.shell { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+		header { border-bottom: 1px solid var(--line); }
+		.nav { height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+		.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; font-weight: 700; letter-spacing: -.03em; }
+		.brand-mark { display: grid; place-items: center; width: 31px; height: 31px; border-radius: 10px 10px 10px 3px; background: var(--moss); color: #fff; font-size: 17px; }
+		.nav-links { display: flex; align-items: center; gap: 26px; color: var(--muted); font-size: 14px; }
+		.nav-links a { text-decoration: none; }
+		.nav-links a:hover { color: var(--ink); }
+		.date-pill { color: var(--moss-dark); background: #e6ecdf; border-radius: 999px; padding: 8px 13px; font-size: 13px; font-weight: 600; }
+
+		main { padding: 58px 0 80px; }
+		.intro { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 32px; }
+		.eyebrow { color: var(--coral); text-transform: uppercase; font-size: 11px; letter-spacing: .16em; font-weight: 700; margin: 0 0 12px; }
+		h1, h2, h3, p { margin-top: 0; }
+		h1 { max-width: 650px; font-family: Fraunces, Georgia, serif; font-size: clamp(38px, 5vw, 68px); line-height: .98; letter-spacing: -.05em; font-weight: 500; margin-bottom: 16px; }
+		.lede { max-width: 520px; color: var(--muted); font-size: 17px; margin-bottom: 0; }
+		.reset-button { border: 0; background: transparent; color: var(--muted); text-decoration: underline; text-underline-offset: 4px; padding: 8px 0; }
+		.reset-button:hover { color: var(--coral); }
+
+		.grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, .9fr); gap: 20px; align-items: start; }
+		.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 26px; box-shadow: var(--shadow); }
+		.card-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+		.card h2 { font-family: Fraunces, Georgia, serif; font-size: 26px; line-height: 1.1; letter-spacing: -.03em; font-weight: 500; margin-bottom: 0; }
+		.tiny-label { color: var(--muted); font-size: 12px; }
+
+		.focus-card { background: var(--moss-dark); border-color: var(--moss-dark); color: #f9f8f0; }
+		.focus-card .eyebrow, .focus-card .tiny-label { color: #c8d2ba; }
+		.focus-card h2 { font-size: 30px; }
+		.focus-input { display: block; width: 100%; border: 1px solid #778568; border-radius: 10px; background: transparent; color: white; padding: 13px 14px; outline: none; }
+		.focus-input::placeholder { color: #c8d2ba; }
+		.focus-input:focus { border-color: var(--sun); box-shadow: 0 0 0 3px rgba(240,199,102,.18); }
+		.focus-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; gap: 12px; }
+		.save-button { border: 0; border-radius: 8px; background: var(--sun); color: #3d3523; padding: 10px 15px; font-weight: 700; }
+		.save-button:hover { background: #f6d887; }
+
+		.task-list { display: grid; gap: 10px; }
+		.task-row { display: grid; grid-template-columns: 25px 1fr 28px; align-items: center; gap: 10px; border-bottom: 1px solid #ecebe5; padding: 6px 0 12px; }
+		.task-row:last-child { border-bottom: 0; padding-bottom: 4px; }
+		.check { width: 21px; height: 21px; border: 1.5px solid #adb2a6; border-radius: 50%; background: transparent; appearance: none; position: relative; }
+		.check:checked { background: var(--moss); border-color: var(--moss); }
+		.check:checked::after { content: '✓'; position: absolute; color: white; font-size: 14px; left: 3px; top: -1px; }
+		.task-text { min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); padding: 4px 0; }
+		.task-text.done { text-decoration: line-through; color: #a2a49d; }
+		.delete-task { border: 0; background: transparent; color: #a5a69f; font-size: 20px; line-height: 1; padding: 3px; }
+		.delete-task:hover { color: var(--coral); }
+		.add-task { display: inline-flex; align-items: center; gap: 7px; border: 0; background: transparent; color: var(--moss-dark); font-weight: 700; font-size: 14px; padding: 15px 0 0; }
+		.add-task span { font-size: 20px; font-weight: 400; }
+
+		.habit-card { background: #f0eadd; border-color: #e4dac7; }
+		.habit-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; }
+		.habit { border: 1px solid #d6c9b4; border-radius: 10px; background: rgba(255,255,255,.36); color: var(--ink); padding: 13px 7px 11px; text-align: center; }
+		.habit:hover { border-color: var(--coral); }
+		.habit.active { background: var(--coral); border-color: var(--coral); color: white; }
+		.habit-icon { display: block; font-size: 20px; margin-bottom: 7px; }
+		.habit-name { display: block; font-size: 11px; font-weight: 600; }
+		.habit-note { color: #827d72; font-size: 12px; margin: 17px 0 0; }
+
+		.notes-area { width: 100%; min-height: 146px; resize: vertical; border: 0; outline: 0; background: #f7f6f1; border-radius: 11px; color: var(--ink); padding: 14px; line-height: 1.6; }
+		.notes-area:focus { box-shadow: 0 0 0 2px var(--blue); }
+		.notes-area::placeholder { color: #a3a49d; }
+		.status { color: var(--moss); font-size: 12px; opacity: 0; transition: opacity .2s; }
+		.status.visible { opacity: 1; }
+
+		.prompt-card { background: var(--blue); border-color: #cadbd5; position: relative; overflow: hidden; }
+		.prompt-card::after { content: '?'; position: absolute; font-family: Fraunces, Georgia, serif; font-size: 190px; line-height: 1; color: rgba(93,112,78,.08); right: 10px; bottom: -50px; }
+		.prompt-card p { position: relative; z-index: 1; font-family: Fraunces, Georgia, serif; font-size: 24px; line-height: 1.22; letter-spacing: -.025em; margin: 25px 0 26px; max-width: 410px; }
+		.outline-button { position: relative; z-index: 1; border: 1px solid var(--moss); color: var(--moss-dark); background: transparent; border-radius: 7px; padding: 9px 13px; font-size: 13px; font-weight: 700; }
+		.outline-button:hover { background: var(--moss-dark); color: white; }
+
+		.resources { padding: 70px 0 0; }
+		.resources-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+		.resources h2 { font-family: Fraunces, Georgia, serif; font-size: 32px; font-weight: 500; letter-spacing: -.04em; margin-bottom: 0; }
+		.resource-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+		.resource { border-top: 2px solid var(--line); padding: 17px 0 0; }
+		.resource h3 { font-size: 16px; margin-bottom: 6px; }
+		.resource p { color: var(--muted); font-size: 14px; margin-bottom: 0; }
+		footer { border-top: 1px solid var(--line); margin-top: 72px; padding: 24px 0 35px; color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; gap: 20px; }
+		footer nav { display: flex; gap: 18px; }
+		footer a:hover { color: var(--ink); }
+		.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+		@media (max-width: 760px) {
+			.shell { width: min(100% - 28px, 620px); }
+			.nav { height: 66px; }
+			.nav-links { display: none; }
+			main { padding-top: 38px; }
+			.intro { display: block; }
+			.intro .date-pill { display: inline-block; margin-top: 22px; }
+			.grid { grid-template-columns: 1fr; }
+			.card { padding: 21px; }
+			.resource-grid { grid-template-columns: 1fr; gap: 25px; }
+			.resources { padding-top: 50px; }
+			footer { display: block; }
+			footer nav { margin-top: 12px; }
+		}
+	</style>
+</head>
+<body>
+	<header>
+		<div class="shell nav">
+			<a class="brand" href="#top" aria-label="Daily Desk home"><span class="brand-mark">D</span> Daily Desk</a>
+			<nav class="nav-links" aria-label="Main navigation"><a href="#today">Today</a><a href="#resources">Resources</a><a href="#about">About</a></nav>
+			<div class="date-pill" id="datePill">Today</div>
+		</div>
+	</header>
+
+	<main class="shell" id="top">
+		<section class="intro" id="today">
+			<div>
+				<p class="eyebrow">A small space for a better day</p>
+				<h1>Make room for what matters.</h1>
+				<p class="lede">A private, practical dashboard for choosing your focus, tending to the basics, and clearing your head.</p>
+			</div>
+			<button class="reset-button" id="resetDay" type="button">Start fresh</button>
+		</section>
+
+		<div class="grid">
+			<div class="left-column">
+				<section class="card focus-card" aria-labelledby="focusHeading">
+					<div class="card-header"><div><p class="eyebrow">Your north star</p><h2 id="focusHeading">What would make today feel worthwhile?</h2></div><span class="tiny-label">01</span></div>
+					<label class="sr-only" for="focusInput">Your main focus</label>
+					<input class="focus-input" id="focusInput" maxlength="120" placeholder="One meaningful thing is enough..." autocomplete="off">
+					<div class="focus-foot"><span class="tiny-label">Saved only on this device</span><button class="save-button" id="saveFocus" type="button">Save focus</button></div>
+				</section>
+
+				<section class="card" aria-labelledby="tasksHeading" style="margin-top:20px;">
+					<div class="card-header"><h2 id="tasksHeading">A short list</h2><span class="tiny-label" id="taskCount">0 of 0 complete</span></div>
+					<div class="task-list" id="taskList"></div>
+					<button class="add-task" id="addTask" type="button"><span>+</span> Add a task</button>
+				</section>
+			</div>
+
+			<aside class="right-column">
+				<section class="card habit-card" aria-labelledby="habitHeading">
+					<div class="card-header"><h2 id="habitHeading">The basics</h2><span class="tiny-label">02</span></div>
+					<div class="habit-grid" id="habitGrid">
+						<button class="habit" data-habit="water" type="button"><span class="habit-icon">◒</span><span class="habit-name">Water</span></button>
+						<button class="habit" data-habit="move" type="button"><span class="habit-icon">↗</span><span class="habit-name">Move</span></button>
+						<button class="habit" data-habit="outside" type="button"><span class="habit-icon">☼</span><span class="habit-name">Outside</span></button>
+						<button class="habit" data-habit="pause" type="button"><span class="habit-icon">Ⅱ</span><span class="habit-name">Pause</span></button>
+					</div>
+					<p class="habit-note">Tiny check-ins count. Tap each one you make time for.</p>
+				</section>
+
+				<section class="card" aria-labelledby="notesHeading" style="margin-top:20px;">
+					<div class="card-header"><h2 id="notesHeading">Clear your head</h2><span class="status" id="noteStatus">Saved</span></div>
+					<label class="sr-only" for="notes">A place for notes</label>
+					<textarea class="notes-area" id="notes" maxlength="1000" placeholder="A thought, a reminder, a worry to park here..."></textarea>
+				</section>
+
+				<section class="card prompt-card" style="margin-top:20px;" aria-labelledby="promptHeading">
+					<p class="eyebrow">A gentle prompt</p>
+					<p id="promptHeading">What can be made 10% easier today?</p>
+					<button class="outline-button" id="newPrompt" type="button">Another prompt</button>
+				</section>
+			</aside>
+		</div>
+
+		<section class="resources" id="resources" aria-labelledby="resourcesHeading">
+			<div class="resources-head"><h2 id="resourcesHeading">Useful, on purpose</h2><span class="tiny-label">A few ideas to carry with you</span></div>
+			<div class="resource-grid">
+				<article class="resource"><h3>Make the next step smaller</h3><p>When a task feels heavy, name the first visible action: open the document, fill the bottle, put on the shoes.</p></article>
+				<article class="resource"><h3>Leave a landing place</h3><p>Before you finish work, write down where to begin next time. Future-you gets a softer start.</p></article>
+				<article class="resource"><h3>Notice what is enough</h3><p>Productivity is not a measure of your worth. A day can be useful because you cared for yourself.</p></article>
+			</div>
+		</section>
+
+	</main>
+
+	<footer class="shell">
+		<span>Daily Desk · A quiet tool for everyday life</span>
+		<nav aria-label="Footer navigation"><a href="about.html">About</a><a href="privacy.html">Privacy</a><a href="contact.html">Contact</a></nav>
+	</footer>
+
+	<script>
+		const storageKey = 'daily-desk-v1';
+		const prompts = [
+			'What can be made 10% easier today?',
+			'What deserves your best attention, not all your attention?',
+			'What would you thank yourself for doing before lunch?',
+			'What can wait without becoming a problem?',
+			'Where could you trade perfection for progress?'
+		];
+		const defaultTasks = [{ text: 'Choose one main focus', done: false }, { text: 'Take a real break', done: false }, { text: 'Close one open loop', done: false }];
+		const state = JSON.parse(localStorage.getItem(storageKey) || 'null') || { focus: '', notes: '', tasks: defaultTasks, habits: {} };
+		const $ = (id) => document.getElementById(id);
+
+		function save() { localStorage.setItem(storageKey, JSON.stringify(state)); }
+		function updateCount() { const complete = state.tasks.filter((task) => task.done).length; $('taskCount').textContent = `${complete} of ${state.tasks.length} complete`; }
+		function renderTasks() {
+			const list = $('taskList'); list.innerHTML = '';
+			state.tasks.forEach((task, index) => {
+				const row = document.createElement('div'); row.className = 'task-row';
+				const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.className = 'check'; checkbox.checked = task.done; checkbox.setAttribute('aria-label', `Complete ${task.text || 'task'}`);
+				checkbox.addEventListener('change', () => { task.done = checkbox.checked; renderTasks(); save(); });
+				const input = document.createElement('input'); input.className = `task-text${task.done ? ' done' : ''}`; input.value = task.text; input.maxLength = 100; input.setAttribute('aria-label', 'Task description');
+				input.addEventListener('input', () => { task.text = input.value; save(); });
+				const remove = document.createElement('button'); remove.className = 'delete-task'; remove.type = 'button'; remove.textContent = '×'; remove.setAttribute('aria-label', 'Remove task');
+				remove.addEventListener('click', () => { state.tasks.splice(index, 1); renderTasks(); save(); });
+				row.append(checkbox, input, remove); list.append(row);
+			});
+			updateCount();
+		}
+
+		function flashStatus() { $('noteStatus').classList.add('visible'); clearTimeout(flashStatus.timer); flashStatus.timer = setTimeout(() => $('noteStatus').classList.remove('visible'), 1400); }
+		const now = new Date(); $('datePill').textContent = now.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+		$('focusInput').value = state.focus; $('notes').value = state.notes; renderTasks();
+		document.querySelectorAll('.habit').forEach((habit) => { habit.classList.toggle('active', !!state.habits[habit.dataset.habit]); habit.addEventListener('click', () => { state.habits[habit.dataset.habit] = !state.habits[habit.dataset.habit]; habit.classList.toggle('active'); save(); }); });
+		$('saveFocus').addEventListener('click', () => { state.focus = $('focusInput').value.trim(); save(); $('focusInput').blur(); });
+		$('focusInput').addEventListener('keydown', (event) => { if (event.key === 'Enter') $('saveFocus').click(); });
+		$('notes').addEventListener('input', () => { state.notes = $('notes').value; save(); flashStatus(); });
+		$('addTask').addEventListener('click', () => { state.tasks.push({ text: '', done: false }); renderTasks(); save(); document.querySelectorAll('.task-text')[state.tasks.length - 1].focus(); });
+		$('newPrompt').addEventListener('click', () => { const current = $('promptHeading').textContent; const options = prompts.filter((prompt) => prompt !== current); $('promptHeading').textContent = options[Math.floor(Math.random() * options.length)]; });
+		$('resetDay').addEventListener('click', () => { if (confirm('Clear today\'s focus, tasks, habits, and notes?')) { localStorage.removeItem(storageKey); location.reload(); } });
+	</script>
+</body>
+</html>
